@@ -3,7 +3,7 @@ package com.jwt.implementation.controller;
 import com.jwt.implementation.model.Product;
 import com.jwt.implementation.model.User;
 import com.jwt.implementation.repository.ProductRepository;
-import com.jwt.implementation.service.JwtUtilService;
+import com.jwt.implementation.authService.JwtUtilService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

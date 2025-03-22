@@ -1,4 +1,4 @@
-package com.jwt.implementation.service;
+package com.jwt.implementation.authService;
 
 import com.jwt.implementation.config.JwtGeneratorValidator;
 import com.jwt.implementation.model.User;
@@ -30,6 +30,7 @@ public class JwtUtilService {
         if (user == null) {
             throw new Exception("User not found");
         }
+
         return user; // Return the User object with all details
     }
 }

@@ -2,10 +2,12 @@ package com.jwt.implementation.responces;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Component
 public class GenerateResponces {
 
     public ResponseEntity<Object> generateRespose(String message, HttpStatus st, Object responseobj) {

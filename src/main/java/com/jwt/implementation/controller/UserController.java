@@ -3,6 +3,7 @@ package com.jwt.implementation.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.jwt.implementation.authService.JwtUtilService;
 import com.jwt.implementation.repository.ProductRepository;
 import com.jwt.implementation.responces.GenerateResponces;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,10 @@ import com.jwt.implementation.repository.UserRepository;
 public class UserController {
 
 	@Autowired
-	UserRepository userRepo;
+	private UserRepository userRepo;
+
+	@Autowired
+	private JwtUtilService jwtUtilService;
 
 	@Autowired
 	GenerateResponces generateResponces;
@@ -52,17 +56,17 @@ public class UserController {
 			return generateResponces.generateRespose("User saved successfully : " + users.getId(), HttpStatus.OK, users);
 	}
 
-//	@GetMapping("/genToken")
-//	public String generateJwtToken(@RequestBody UserDTO userDto) throws Exception {
-//		try {
-//			authManager.authenticate(
-//					new UsernamePasswordAuthenticationToken(userDto.getUserName(), userDto.getPassword()));
-//		} catch (Exception ex) {
-//			throw new Exception("inavalid username/password");
-//		}
-//		return jwtGenVal.generateToken(userDto.getUserName(), String.valueOf(userDto.getId()));
-//
-//	}
+	@GetMapping("/decode-user")
+	public User decodeUser(@RequestHeader("Authorization") String token) throws Exception {
+		User user=null;
+		try {
+		 user=jwtUtilService.extractUserFromToken(token);
+		} catch (Exception ex) {
+			throw new Exception("inavalid username/password");
+		}
+		return user;
+
+	}
 
 	@PostMapping("/genToken")
 	public String generateJwtToken(@RequestBody UserDTO userDto) throws Exception {
