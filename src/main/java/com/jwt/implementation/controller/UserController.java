@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.jwt.implementation.repository.ProductRepository;
+import com.jwt.implementation.responces.GenerateResponces;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,9 @@ public class UserController {
 
 	@Autowired
 	UserRepository userRepo;
+
+	@Autowired
+	GenerateResponces generateResponces;
 
 	@Autowired
 	AuthenticationManager authManager;
@@ -43,9 +47,9 @@ public class UserController {
 		user.setUserName(userDto.getUserName());
 		User users = userRepo.save(user);
 		if (users.equals(null))
-			return generateRespose("Not able to save user ", HttpStatus.BAD_REQUEST, user);
+			return generateResponces.generateRespose("Not able to save user ", HttpStatus.BAD_REQUEST, user);
 		else
-			return generateRespose("User saved successfully : " + users.getId(), HttpStatus.OK, users);
+			return generateResponces.generateRespose("User saved successfully : " + users.getId(), HttpStatus.OK, users);
 	}
 
 //	@GetMapping("/genToken")
@@ -102,14 +106,6 @@ public class UserController {
 
 
 	
-	public ResponseEntity<Object> generateRespose(String message, HttpStatus st, Object responseobj) {
 
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("meaasge", message);
-		map.put("Status", st.value());
-		map.put("data", responseobj);
-
-		return new ResponseEntity<Object>(map, st);
-	}
 
 }
