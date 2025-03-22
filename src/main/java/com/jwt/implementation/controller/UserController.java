@@ -28,8 +28,7 @@ public class UserController {
 	@Autowired
 	private JwtUtilService jwtUtilService;
 
-	@Autowired
-	GenerateResponces generateResponces;
+
 
 	@Autowired
 	AuthenticationManager authManager;
@@ -44,16 +43,16 @@ public class UserController {
 	private ProductRepository productRepository;
 
 	@PostMapping("/registration")
-	public ResponseEntity<Object> registerUser(@RequestBody UserDTO userDto) {
+	public ResponseEntity<?> registerUser(@RequestBody UserDTO userDto) {
 		User user = new User();
 		user.setEmail(userDto.getEmail());
 		user.setPassword(bcCryptPasswordEncoder.encode(userDto.getPassword()));
 		user.setUserName(userDto.getUserName());
 		User users = userRepo.save(user);
 		if (users.equals(null))
-			return generateResponces.generateRespose("Not able to save user ", HttpStatus.BAD_REQUEST, user);
+			return GenerateResponces.generateResponse("Not able to save user ", HttpStatus.BAD_REQUEST);
 		else
-			return generateResponces.generateRespose("User saved successfully : " + users.getId(), HttpStatus.OK, users);
+			return GenerateResponces.generateResponse("User saved successfully : " + users.getId(), HttpStatus.OK);
 	}
 
 	@GetMapping("/decode-user")

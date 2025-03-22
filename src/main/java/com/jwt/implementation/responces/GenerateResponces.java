@@ -10,13 +10,15 @@ import java.util.Map;
 @Component
 public class GenerateResponces {
 
-    public ResponseEntity<Object> generateRespose(String message, HttpStatus st, Object responseobj) {
 
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("meaasge", message);
-        map.put("Status", st.value());
-        map.put("data", responseobj);
+        public static <T> ResponseEntity<Map<String, Object>> generateResponse(String message, HttpStatus status) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("message", message);
+            map.put("status", status.value());
 
-        return new ResponseEntity<Object>(map, st);
-    }
+
+            return new ResponseEntity<>(map, status);
+        }
+
+
 }

@@ -44,14 +44,29 @@ public class SecurityConfig {
 		return autheticationConfiguration.getAuthenticationManager();
 	}
 
+//	@Bean
+//	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+//		http.cors().and().csrf().disable().authorizeRequests().antMatchers("/registration","/genToken").permitAll().anyRequest()
+//				.authenticated().and().sessionManagement()
+//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+//		 http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+//		return http.build();
+//
+//	}
+
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.cors().and().csrf().disable().authorizeRequests().antMatchers("/registration","/genToken").permitAll().anyRequest()
-				.authenticated().and().sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		 http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-		return http.build();
+		http.cors()
+				.and()
+				.csrf().disable()
+				.authorizeRequests()
+				.anyRequest().permitAll() // Allow all requests without authentication
+				.and()
+				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
+		http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+		return http.build();
 	}
+
 
 }
