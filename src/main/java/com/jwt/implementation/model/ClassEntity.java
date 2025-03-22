@@ -21,8 +21,7 @@ public class ClassEntity {
     @JoinColumn(name = "school_id", nullable = false)
     private School school;
 
-
-    @Column(name = "class_name", nullable = false)
+    @Column(nullable = false, unique = true)
     private String className;
 
     @ManyToOne

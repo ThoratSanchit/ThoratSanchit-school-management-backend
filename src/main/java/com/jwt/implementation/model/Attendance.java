@@ -1,13 +1,20 @@
 package com.jwt.implementation.model;
 
 import javax.persistence.*;
-import lombok.Data;
-import java.util.Date;
 
-@Data
+import com.jwt.implementation.enums.AttendanceStatus;
+import lombok.*;
+
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "attendance")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Attendance {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long attendanceId;
@@ -18,12 +25,12 @@ public class Attendance {
 
     @ManyToOne
     @JoinColumn(name = "class_id", nullable = false)
-    private ClassEntity classEntity; // Renamed from className to classEntity
+    private ClassEntity className;
 
-    @Column(name = "date", nullable = false)
-    @Temporal(TemporalType.DATE)
-    private Date date;
+    @Column(nullable = false)
+    private LocalDate date;
 
-    @Column(name = "status", nullable = false)
-    private String status; // Present, Absent, Late
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AttendanceStatus status;
 }

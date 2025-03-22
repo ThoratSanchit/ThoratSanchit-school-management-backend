@@ -1,30 +1,33 @@
 package com.jwt.implementation.model;
 
 import javax.persistence.*;
-import lombok.Data;
-import java.util.Date;
+import lombok.*;
 
-@Data
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "exams")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Exam {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long examId;
 
     @ManyToOne
     @JoinColumn(name = "class_id", nullable = false)
-    private ClassEntity classEntity; // ✅ Correct
+    private ClassEntity className;
 
-
-    @Column(name = "exam_name", nullable = false)
+    @Column(nullable = false)
     private String examName;
 
-    @Column(name = "date", nullable = false)
-    @Temporal(TemporalType.DATE)
-    private Date date;
+    @Column(nullable = false)
+    private LocalDate date;
 
-    @Column(name = "created_at", updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt = new Date();
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 }

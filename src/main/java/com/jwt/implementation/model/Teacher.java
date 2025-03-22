@@ -1,13 +1,20 @@
 package com.jwt.implementation.model;
 
 import javax.persistence.*;
-import lombok.Data;
-import java.util.Date;
 
-@Data
+import com.jwt.implementation.enums.UserType;
+import lombok.*;
+
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "teachers")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Teacher {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long teacherId;
@@ -20,30 +27,29 @@ public class Teacher {
     @JoinColumn(name = "admin_id", nullable = false)
     private Admin admin;
 
-    @Column(name = "full_name", nullable = false)
+    @Column(nullable = false)
     private String fullName;
 
-    @Column(name = "email", unique = true, nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Column(nullable = false)
     private String password;
 
-    @Column(name = "contact_number", nullable = false)
+    @Column(nullable = false)
     private String contactNumber;
 
     @ManyToOne
     @JoinColumn(name = "subject_id", nullable = false)
     private Subject subject;
 
-    @Column(name = "joining_date", nullable = false)
-    @Temporal(TemporalType.DATE)
-    private Date joiningDate;
+    @Column(nullable = false)
+    private LocalDateTime joiningDate;
 
-    @Column(name = "type_of_user", nullable = false)
-    private String typeOfUser = "Teacher";
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserType typeOfUser = UserType.TEACHER;
 
-    @Column(name = "created_at", updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt = new Date();
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 }

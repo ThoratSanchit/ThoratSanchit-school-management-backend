@@ -1,13 +1,18 @@
 package com.jwt.implementation.model;
 
 import javax.persistence.*;
-import lombok.Data;
-import java.util.Date;
+import lombok.*;
 
-@Data
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "books")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Book {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bookId;
@@ -20,16 +25,15 @@ public class Book {
     @JoinColumn(name = "admin_id", nullable = false)
     private Admin admin;
 
-    @Column(name = "title", nullable = false)
+    @Column(nullable = false)
     private String title;
 
-    @Column(name = "author")
+    @Column
     private String author;
 
-    @Column(name = "available", nullable = false)
+    @Column(nullable = false)
     private Boolean available = true;
 
-    @Column(name = "created_at", updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt = new Date();
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 }

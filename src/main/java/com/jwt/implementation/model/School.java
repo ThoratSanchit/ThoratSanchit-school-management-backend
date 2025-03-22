@@ -1,27 +1,56 @@
 package com.jwt.implementation.model;
 
 import javax.persistence.*;
-import lombok.Data;
-import java.util.Date;
+import lombok.*;
 
-@Data
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Entity
 @Table(name = "schools")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class School {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long schoolId;
 
-    @Column(name = "school_name", unique = true, nullable = false)
+    @Column(nullable = false, unique = true)
     private String schoolName;
 
-    @Column(name = "school_address", nullable = false)
+    @Column(nullable = false)
     private String schoolAddress;
 
-    @Column(name = "school_contact", nullable = false)
+    @Column(nullable = false)
     private String schoolContact;
 
-    @Column(name = "created_at", updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt = new Date();
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @OneToMany(mappedBy = "school", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Admin> admins;
+
+    @OneToMany(mappedBy = "school", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Teacher> teachers;
+
+    @OneToMany(mappedBy = "school", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Parent> parents;
+
+    @OneToMany(mappedBy = "school", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Student> students;
+
+    @OneToMany(mappedBy = "school", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Accountant> accountants;
+
+    @OneToMany(mappedBy = "school", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ClassEntity> classes;
+
+    @OneToMany(mappedBy = "school", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Subject> subjects;
+
+    @OneToMany(mappedBy = "school", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Book> books;
 }

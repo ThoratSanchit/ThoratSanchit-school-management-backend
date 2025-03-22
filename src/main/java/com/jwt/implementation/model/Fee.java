@@ -1,13 +1,20 @@
 package com.jwt.implementation.model;
 
 import javax.persistence.*;
-import lombok.Data;
-import java.util.Date;
 
-@Data
+import com.jwt.implementation.enums.FeeStatus;
+import lombok.*;
+
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "fees")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Fee {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long feeId;
@@ -20,17 +27,16 @@ public class Fee {
     @JoinColumn(name = "accountant_id", nullable = false)
     private Accountant accountant;
 
-    @Column(name = "amount", nullable = false)
+    @Column(nullable = false)
     private Double amount;
 
-    @Column(name = "status", nullable = false)
-    private String status; // Paid, Pending
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private FeeStatus status;
 
-    @Column(name = "due_date", nullable = false)
-    @Temporal(TemporalType.DATE)
-    private Date dueDate;
+    @Column(nullable = false)
+    private LocalDate dueDate;
 
-    @Column(name = "payment_date")
-    @Temporal(TemporalType.DATE)
-    private Date paymentDate;
+    @Column
+    private LocalDate paymentDate;
 }

@@ -1,13 +1,20 @@
 package com.jwt.implementation.model;
 
 import javax.persistence.*;
-import lombok.Data;
-import java.util.Date;
 
-@Data
+import com.jwt.implementation.enums.UserType;
+import lombok.*;
+
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "admins")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Admin {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long adminId;
@@ -16,22 +23,22 @@ public class Admin {
     @JoinColumn(name = "school_id", nullable = false)
     private School school;
 
-    @Column(name = "full_name", nullable = false)
+    @Column(nullable = false)
     private String fullName;
 
-    @Column(name = "email", unique = true, nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Column(nullable = false)
     private String password;
 
-    @Column(name = "contact_number", nullable = false)
+    @Column(nullable = false)
     private String contactNumber;
 
-    @Column(name = "type_of_user", nullable = false)
-    private String typeOfUser = "Admin";
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserType typeOfUser = UserType.ADMIN;
 
-    @Column(name = "created_at", updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt = new Date();
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 }
