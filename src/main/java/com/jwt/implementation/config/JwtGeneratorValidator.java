@@ -47,7 +47,8 @@ public class JwtGeneratorValidator {
     public String generateToken(String username, String email, String userId) { // Correct order
         Map<String, Object> claims = new HashMap<>();
         claims.put("email", email); // Store correct email
-        claims.put("id", userId);   // Store correct id
+        claims.put("id", userId);
+        // Store correct id
         return createToken(claims, username);
     }
 
