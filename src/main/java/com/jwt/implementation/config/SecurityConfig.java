@@ -1,72 +1,30 @@
 package com.jwt.implementation.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import com.jwt.implementation.service.DefaultUserService;
 
 @Configuration
-@EnableWebSecurity
 public class SecurityConfig {
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-	@Autowired
-	DefaultUserService userDetailsService;
-	
-	@Autowired
-	JwtFilter jwtFilter;
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf().disable()
+                .authorizeHttpRequests(auth -> auth
+                        .anyRequest().permitAll() // Allow all requests without authentication
+                )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-	@Bean
-	public BCryptPasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
-
-	@Bean
-	public DaoAuthenticationProvider authenticationProvider() {
-		DaoAuthenticationProvider auth = new DaoAuthenticationProvider();
-		auth.setUserDetailsService(userDetailsService);
-		auth.setPasswordEncoder(passwordEncoder());
-		return auth;
-	}
-
-	@Bean
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration autheticationConfiguration)
-			throws Exception {
-		return autheticationConfiguration.getAuthenticationManager();
-	}
-
-//	@Bean
-//	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//		http.cors().and().csrf().disable().authorizeRequests().antMatchers("/registration","/genToken").permitAll().anyRequest()
-//				.authenticated().and().sessionManagement()
-//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-//		 http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-//		return http.build();
-//
-//	}
-
-	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.cors()
-				.and()
-				.csrf().disable()
-				.authorizeRequests()
-				.anyRequest().permitAll() // Allow all requests without authentication
-				.and()
-				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
-		http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-		return http.build();
-	}
-
+        return http.build();
+    }
 
 }

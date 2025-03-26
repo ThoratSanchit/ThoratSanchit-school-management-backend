@@ -1,10 +1,6 @@
 package com.jwt.implementation.authService;
 
 import com.jwt.implementation.config.JwtGeneratorValidator;
-import com.jwt.implementation.model.Admin;
-import com.jwt.implementation.model.User;
-import com.jwt.implementation.repository.AdminRepository;
-import com.jwt.implementation.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,51 +10,20 @@ public class JwtUtilService {
     @Autowired
     private JwtGeneratorValidator jwtGenVal;
 
-    @Autowired
-    private UserRepository userRepo;
+    public String getEmailFromToken(String token) {
+        try {
+            if (token == null || !token.startsWith("Bearer ")) {
+                throw new IllegalArgumentException("Invalid token format");
+            }
 
-    @Autowired
-    private AdminRepository adminRepository;
+            // Remove "Bearer " prefix
+            token = token.substring(7);
 
-    public User extractUserFromToken(String token) throws Exception {
-        if (token == null || !token.startsWith("Bearer ")) {
-            throw new Exception("Invalid Token");
+            // Extract email
+            return jwtGenVal.extractEmail(token);
+        } catch (Exception e) {
+            return null; // Return null if token is invalid
         }
-
-        token = token.substring(7); // Remove "Bearer " prefix
-
-        // Extract email from JWT
-        String email = jwtGenVal.extractEmail(token);
-
-
-        // Fetch user from database
-        User user = userRepo.findByEmail(email);
-        if (user == null) {
-            throw new Exception("User not found");
-        }
-
-        return user; // Return the User object with all details
     }
 
-
-
-    public Admin extractAdminFromToken(String token) throws Exception {
-        if (token == null || !token.startsWith("Bearer ")) {
-            throw new Exception("Invalid Token");
-        }
-
-        token = token.substring(7); // Remove "Bearer " prefix
-
-        // Extract email from JWT
-        String email = jwtGenVal.extractEmail(token);
-
-        System.out.println("-----------------------------------------------------------------------------------");
-        // Fetch user from database
-        Admin user = adminRepository.findByEmail(email);
-        if (user == null) {
-            throw new Exception("User not found for email: " + email);
-        }
-        System.out.println("_------------------------------------------------------------------");
-        return user; // Return the User object with all details
-    }
 }

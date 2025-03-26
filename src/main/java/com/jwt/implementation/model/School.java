@@ -1,6 +1,10 @@
 package com.jwt.implementation.model;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -31,6 +35,8 @@ public class School {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     // Only admins are directly linked to the school
+//    @JsonIgnore
+    @JsonManagedReference
     @OneToMany(mappedBy = "school", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Admin> admins;
 }

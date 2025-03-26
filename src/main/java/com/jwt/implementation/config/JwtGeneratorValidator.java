@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
-import org.springframework.security.core.userdetails.UserDetails;
+//import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
@@ -28,6 +28,10 @@ public class JwtGeneratorValidator {
         return extractClaim(token, claims -> claims.get("email", String.class));
     }
 
+    public String extractRoll(String token) {
+        return extractClaim(token, claims -> claims.get("roll", String.class));
+    }
+
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
@@ -44,10 +48,11 @@ public class JwtGeneratorValidator {
         return extractExpiration(token).before(new Date());
     }
 
-    public String generateToken(String username, String email, String userId) { // Correct order
+    public String generateToken(String username, String email, String userId,String roll) { // Correct order
         Map<String, Object> claims = new HashMap<>();
         claims.put("email", email); // Store correct email
         claims.put("id", userId);
+        claims.put("roll",roll);
         // Store correct id
         return createToken(claims, username);
     }
@@ -64,9 +69,9 @@ public class JwtGeneratorValidator {
     }
 
 
-    public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
-    }
+//    public Boolean validateToken(String token, UserDetails userDetails) {
+//        final String username = extractUsername(token);
+//        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+//    }
 
 }

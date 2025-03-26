@@ -8,7 +8,7 @@ import com.jwt.implementation.service.SchoolService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class SchoolController {
     @Autowired
     private SchoolService schoolService;
-
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    PasswordEncoder passwordEncoder;
+
     @Autowired
     private AdminService adminService;
 
@@ -45,15 +45,10 @@ public class SchoolController {
         School savedSchool = schoolService.ctreateSchool(school);
 
         return GenerateResponces.generateResponse(
-                "School created successfully with Admin ID: " + savedSchool.getAdmins().get(0).getAdminId() +" School id"+ savedSchool.getSchoolId(),
+                "School created successfully with Admin ID: " + savedSchool.getAdmins().get(0).getAdminId() + " School id" + savedSchool.getSchoolId(),
                 HttpStatus.OK
         );
     }
-
-
-
-
-
 
 
 }

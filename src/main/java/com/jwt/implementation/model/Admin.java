@@ -2,6 +2,7 @@ package com.jwt.implementation.model;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.jwt.implementation.enums.UserType;
 import lombok.*;
 
@@ -21,6 +22,7 @@ public class Admin {
 
     @ManyToOne
     @JoinColumn(name = "school_id", nullable = false)
+    @JsonBackReference
     private School school;
 
     @Column(nullable = false)
