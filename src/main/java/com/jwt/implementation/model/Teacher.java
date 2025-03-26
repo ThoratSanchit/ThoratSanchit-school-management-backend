@@ -19,9 +19,9 @@ public class Teacher {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long teacherId;
 
-    @ManyToOne
-    @JoinColumn(name = "school_id", nullable = false)
-    private School school;
+//    @ManyToOne
+//    @JoinColumn(name = "school_id", nullable = false)
+//    private School school;
 
     @ManyToOne
     @JoinColumn(name = "admin_id", nullable = false)
@@ -39,9 +39,9 @@ public class Teacher {
     @Column(nullable = false)
     private String contactNumber;
 
-    @ManyToOne
-    @JoinColumn(name = "subject_id", nullable = false)
-    private Subject subject;
+//    @ManyToOne
+//    @JoinColumn(name = "subject_id", nullable = false)
+//    private Subject subject;
 
     @Column(nullable = false)
     private LocalDateTime joiningDate;
