@@ -1,6 +1,6 @@
 package com.jwt.implementation.controller;
 
-import com.jwt.implementation.authService.JwtUtilService;
+import com.jwt.implementation.authService.AuthService;
 import com.jwt.implementation.config.JwtGeneratorValidator;
 import com.jwt.implementation.model.Admin;
 import com.jwt.implementation.repository.AdminRepository;
@@ -23,7 +23,7 @@ public class AdminController {
 
 
     @Autowired
-    private JwtUtilService jwtUtilService;
+    private AuthService authService;
     @Autowired
     private AdminRepository adminRepository;
 
@@ -60,7 +60,7 @@ public class AdminController {
     @GetMapping("/decode-token")
     public ResponseEntity<?> decodeToken(@RequestHeader("Authorization") String token) {
         try {
-           String email=jwtUtilService.getEmailFromToken(token);
+           String email= AuthService.getEmailFromToken(token);
            Admin admin=adminRepository.findByEmail(email);
             return ResponseEntity.ok(admin);
         } catch (Exception e) {
