@@ -27,26 +27,27 @@ public class SchoolController {
     public ResponseEntity<?> createSchool(@RequestBody School school) {
         // Validate if school details are provided
         if (school.getSchoolName() == null || school.getSchoolAddress() == null || school.getSchoolContact() == null) {
-            return GenerateResponces.generateResponse("School details are required.", HttpStatus.BAD_REQUEST);
+            return GenerateResponces.generateResponse("School details are required.", HttpStatus.BAD_REQUEST,null);
         }
 
-        // Check if Admins are provided
+
         if (school.getAdmins() == null || school.getAdmins().isEmpty()) {
-            return GenerateResponces.generateResponse("At least one admin is required.", HttpStatus.BAD_REQUEST);
+            return GenerateResponces.generateResponse("At least one admin is required.", HttpStatus.BAD_REQUEST,null);
         }
 
-        // Associate each admin with the school before saving
+
         for (Admin admin : school.getAdmins()) {
             admin.setSchool(school);
-            admin.setPassword(passwordEncoder.encode(admin.getPassword())); // Encode password
+            admin.setPassword(passwordEncoder.encode(admin.getPassword()));
         }
 
-        // Save the school along with its admins in one transaction
+
         School savedSchool = schoolService.ctreateSchool(school);
 
         return GenerateResponces.generateResponse(
                 "School created successfully with Admin ID: " + savedSchool.getAdmins().get(0).getAdminId() + " School id" + savedSchool.getSchoolId(),
-                HttpStatus.OK
+                HttpStatus.OK,
+                savedSchool.getSchoolId()
         );
     }
 
