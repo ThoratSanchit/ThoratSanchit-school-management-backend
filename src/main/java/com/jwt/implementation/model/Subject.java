@@ -21,7 +21,11 @@ public class Subject {
     @JoinColumn(name = "school_id", nullable = false)
     private School school;
 
-    @Column(nullable = false, unique = true)
+    @ManyToOne
+    @JoinColumn(name = "class_id", nullable = false)
+    private ClassEntity classEntity;
+
+    @Column(nullable = false)
     private String subjectName;
 
     @Column(nullable = false, updatable = false)

@@ -19,17 +19,21 @@ public class Teacher {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long teacherId;
 
-//    @ManyToOne
-//    @JoinColumn(name = "school_id", nullable = false)
-//    private School school;
+    @ManyToOne
+    @JoinColumn(name = "school_id", nullable = false)
+    private School school;
 
     @ManyToOne
     @JoinColumn(name = "admin_id", nullable = false)
     private Admin admin;
+    @ManyToOne
+    @JoinColumn(name = "class_id", nullable = false)
+    private ClassEntity classEntity;
 
     @Column(nullable = false)
     private String fullName;
-
+    @Column(nullable = false)
+    private String className; // class name ex   bca 1 year
     @Column(nullable = false, unique = true)
     private String email;
 

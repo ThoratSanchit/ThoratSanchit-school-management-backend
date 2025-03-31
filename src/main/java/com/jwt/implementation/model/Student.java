@@ -27,9 +27,9 @@ public class Student {
     @JoinColumn(name = "teacher_id", nullable = false)
     private Teacher teacher;
 
-    @ManyToOne
-    @JoinColumn(name = "parent_id", nullable = false)
-    private Parent parent;
+//    @ManyToOne
+//    @JoinColumn(name = "parent_id", nullable = false)
+//    private Parent parent;
 
     @ManyToOne
     @JoinColumn(name = "class_id", nullable = false)

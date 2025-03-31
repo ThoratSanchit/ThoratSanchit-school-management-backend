@@ -3,9 +3,11 @@ package com.jwt.implementation.controller;
 import com.jwt.implementation.authService.AuthService;
 import com.jwt.implementation.config.JwtGeneratorValidator;
 import com.jwt.implementation.model.Admin;
+import com.jwt.implementation.model.ClassEntity;
 import com.jwt.implementation.model.School;
 import com.jwt.implementation.model.Teacher;
 import com.jwt.implementation.repository.AdminRepository;
+import com.jwt.implementation.repository.ClassModelRepository;
 import com.jwt.implementation.repository.SchoolServiceRepository;
 import com.jwt.implementation.repository.TeacherRepository;
 import com.jwt.implementation.responces.GenerateResponces;
@@ -25,6 +27,8 @@ public class TeacherController {
     @Autowired
     private TeacherService teacherService;
 
+    @Autowired
+    private ClassModelRepository classModelRepository;
     @Autowired
     private AdminRepository adminRepository;
 
@@ -49,14 +53,13 @@ public class TeacherController {
 
             // Set admin and school for the teacher
             teacher.setAdmin(admin);
-
-
+            ClassEntity classEntity=this.classModelRepository.findByClassName(teacher.getClassName());
+            teacher.setClassEntity(classEntity);
             // Hash password before saving
             teacher.setPassword(passwordEncoder.encode(teacher.getPassword()));
-
-            // Save teacher in DB
+            teacher.setSchool(admin.getSchool());
             Teacher savedTeacher = teacherService.saveTeacher(teacher);
-            System.out.println("School Id " + admin.getSchool().getSchoolId());
+
             return GenerateResponces.generateResponse("Teacher created successfully", HttpStatus.OK, savedTeacher.getTeacherId());
         } catch (Exception e) {
             e.printStackTrace();
