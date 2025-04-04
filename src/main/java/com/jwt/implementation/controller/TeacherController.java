@@ -4,11 +4,9 @@ import com.jwt.implementation.authService.AuthService;
 import com.jwt.implementation.config.JwtGeneratorValidator;
 import com.jwt.implementation.model.Admin;
 import com.jwt.implementation.model.ClassEntity;
-import com.jwt.implementation.model.School;
 import com.jwt.implementation.model.Teacher;
 import com.jwt.implementation.repository.AdminRepository;
 import com.jwt.implementation.repository.ClassModelRepository;
-import com.jwt.implementation.repository.SchoolServiceRepository;
 import com.jwt.implementation.repository.TeacherRepository;
 import com.jwt.implementation.responces.GenerateResponces;
 import com.jwt.implementation.service.TeacherService;
@@ -18,7 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/api/teachers")
@@ -29,11 +27,13 @@ public class TeacherController {
 
     @Autowired
     private ClassModelRepository classModelRepository;
+
     @Autowired
     private AdminRepository adminRepository;
 
     @Autowired
     private JwtGeneratorValidator jwtGenVal;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -41,26 +41,41 @@ public class TeacherController {
     private TeacherRepository teacherRepository;
 
     @PostMapping("/create-teacher")
-    public ResponseEntity<?> createTeacher(@RequestHeader("Authorization") String token, @RequestBody Teacher teacher) {
+    public ResponseEntity<?> createTeacher(@RequestHeader("Authorization") String token,  @RequestBody Teacher teacher) {
         try {
             // Extract email from token
             String email = AuthService.getEmailFromToken(token);
-            Admin admin = adminRepository.findByEmail(email);
-
-            if (admin == null) {
-                return GenerateResponces.generateResponse("Admin not found", HttpStatus.BAD_REQUEST, null);
+            if (email == null || email.isEmpty()) {
+                return GenerateResponces.generateResponse("Invalid token", HttpStatus.UNAUTHORIZED, null);
             }
 
-            // Set admin and school for the teacher
-            teacher.setAdmin(admin);
-            ClassEntity classEntity=this.classModelRepository.findByClassName(teacher.getClassName());
-            teacher.setClassEntity(classEntity);
-            // Hash password before saving
-            teacher.setPassword(passwordEncoder.encode(teacher.getPassword()));
-            teacher.setSchool(admin.getSchool());
-            Teacher savedTeacher = teacherService.saveTeacher(teacher);
+            // Find Admin by Email
+            Admin admin = adminRepository.findByEmail(email);
+            if (admin == null) {
+                return GenerateResponces.generateResponse("Admin not found", HttpStatus.NOT_FOUND, null);
+            }
 
-            return GenerateResponces.generateResponse("Teacher created successfully", HttpStatus.OK, savedTeacher.getTeacherId());
+            // Validate Class Name
+            if (teacher.getClassName() == null || teacher.getClassName().isEmpty()) {
+                return GenerateResponces.generateResponse("Class name is required", HttpStatus.BAD_REQUEST, null);
+            }
+
+            // Find ClassEntity by Class Name
+            ClassEntity classEntity = classModelRepository.findByClassName(teacher.getClassName());
+            if (classEntity == null) {
+                return GenerateResponces.generateResponse("Class not found", HttpStatus.NOT_FOUND, null);
+            }
+
+            // Set required fields for teacher
+            teacher.setAdmin(admin);
+            teacher.setClassEntity(classEntity);
+            teacher.setSchool(admin.getSchool());
+            teacher.setPassword(passwordEncoder.encode(teacher.getPassword()));
+
+            // Save Teacher
+            Teacher savedTeacher = teacherService.saveTeacher(teacher);
+            return GenerateResponces.generateResponse("Teacher created successfully", HttpStatus.CREATED, savedTeacher.getTeacherId());
+
         } catch (Exception e) {
             e.printStackTrace();
             return GenerateResponces.generateResponse("Error creating teacher", HttpStatus.INTERNAL_SERVER_ERROR, null);
@@ -68,17 +83,35 @@ public class TeacherController {
     }
 
     @PostMapping("/login")
-    public String loginTeacher(@RequestBody Teacher teacher) {
+    public ResponseEntity<?> loginTeacher(@RequestBody Teacher teacher) {
         try {
-            Teacher getTeacher = this.teacherRepository.findByEmail(teacher.getEmail());
-            if (getTeacher == null) {
-                return "Teacher not exist";
+            if (teacher.getEmail() == null || teacher.getPassword() == null) {
+                return GenerateResponces.generateResponse("Email and password are required", HttpStatus.BAD_REQUEST, null);
             }
-            return jwtGenVal.generateToken(teacher.getFullName(), teacher.getEmail(), String.valueOf(teacher.getTeacherId()), String.valueOf(teacher.getTypeOfUser()));
+
+            Teacher existingTeacher = teacherRepository.findByEmail(teacher.getEmail());
+            if (existingTeacher == null) {
+                return GenerateResponces.generateResponse("Teacher does not exist", HttpStatus.NOT_FOUND, null);
+            }
+
+            // Validate Password
+            if (!passwordEncoder.matches(teacher.getPassword(), existingTeacher.getPassword())) {
+                return GenerateResponces.generateResponse("Invalid password", HttpStatus.UNAUTHORIZED, null);
+            }
+
+            // Generate JWT Token
+            String token = jwtGenVal.generateToken(
+                    existingTeacher.getFullName(),
+                    existingTeacher.getEmail(),
+                    String.valueOf(existingTeacher.getTeacherId()),
+                    String.valueOf(existingTeacher.getTypeOfUser())
+            );
+
+            return GenerateResponces.generateResponse("Login successful", HttpStatus.OK, token);
+
         } catch (Exception e) {
             e.printStackTrace();
+            return GenerateResponces.generateResponse("Error logging in", HttpStatus.INTERNAL_SERVER_ERROR, null);
         }
-        return "Error login teacher";
     }
-
 }

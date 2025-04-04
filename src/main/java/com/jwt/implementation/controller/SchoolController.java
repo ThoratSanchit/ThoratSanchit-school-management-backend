@@ -1,5 +1,4 @@
 package com.jwt.implementation.controller;
-
 import com.jwt.implementation.model.Admin;
 import com.jwt.implementation.model.School;
 import com.jwt.implementation.responces.GenerateResponces;
