@@ -43,13 +43,11 @@ public class TeacherController {
     @PostMapping("/create-teacher")
     public ResponseEntity<?> createTeacher(@RequestHeader("Authorization") String token,  @RequestBody Teacher teacher) {
         try {
-            // Extract email from token
             String email = AuthService.getEmailFromToken(token);
             if (email == null || email.isEmpty()) {
                 return GenerateResponces.generateResponse("Invalid token", HttpStatus.UNAUTHORIZED, null);
             }
 
-            // Find Admin by Email
             Admin admin = adminRepository.findByEmail(email);
             if (admin == null) {
                 return GenerateResponces.generateResponse("Admin not found", HttpStatus.NOT_FOUND, null);
@@ -60,19 +58,17 @@ public class TeacherController {
                 return GenerateResponces.generateResponse("Class name is required", HttpStatus.BAD_REQUEST, null);
             }
 
-            // Find ClassEntity by Class Name
+
             ClassEntity classEntity = classModelRepository.findByClassName(teacher.getClassName());
             if (classEntity == null) {
                 return GenerateResponces.generateResponse("Class not found", HttpStatus.NOT_FOUND, null);
             }
 
-            // Set required fields for teacher
             teacher.setAdmin(admin);
             teacher.setClassEntity(classEntity);
             teacher.setSchool(admin.getSchool());
             teacher.setPassword(passwordEncoder.encode(teacher.getPassword()));
 
-            // Save Teacher
             Teacher savedTeacher = teacherService.saveTeacher(teacher);
             return GenerateResponces.generateResponse("Teacher created successfully", HttpStatus.CREATED, savedTeacher.getTeacherId());
 
@@ -107,7 +103,7 @@ public class TeacherController {
                     String.valueOf(existingTeacher.getTypeOfUser())
             );
 
-            return GenerateResponces.generateResponse("Login successful", HttpStatus.OK, token);
+            return ResponseEntity.ok(token);
 
         } catch (Exception e) {
             e.printStackTrace();
