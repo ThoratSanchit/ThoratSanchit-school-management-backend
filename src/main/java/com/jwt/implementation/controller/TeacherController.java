@@ -4,9 +4,11 @@ import com.jwt.implementation.authService.AuthService;
 import com.jwt.implementation.config.JwtGeneratorValidator;
 import com.jwt.implementation.model.Admin;
 import com.jwt.implementation.model.ClassEntity;
+import com.jwt.implementation.model.Subject;
 import com.jwt.implementation.model.Teacher;
 import com.jwt.implementation.repository.AdminRepository;
 import com.jwt.implementation.repository.ClassModelRepository;
+import com.jwt.implementation.repository.SubjectRepository;
 import com.jwt.implementation.repository.TeacherRepository;
 import com.jwt.implementation.responces.GenerateResponces;
 import com.jwt.implementation.service.TeacherService;
@@ -40,6 +42,9 @@ public class TeacherController {
     @Autowired
     private TeacherRepository teacherRepository;
 
+    @Autowired
+    private SubjectRepository subjectRepository;
+
     @PostMapping("/create-teacher")
     public ResponseEntity<?> createTeacher(@RequestHeader("Authorization") String token,  @RequestBody Teacher teacher) {
         try {
@@ -64,9 +69,15 @@ public class TeacherController {
                 return GenerateResponces.generateResponse("Class not found", HttpStatus.NOT_FOUND, null);
             }
 
+            Subject subject = subjectRepository.findBySubjectName(teacher.getSubject_name());
+            if (subject == null) {
+                return GenerateResponces.generateResponse("Subject not found", HttpStatus.NOT_FOUND, null);
+            }
+
             teacher.setAdmin(admin);
             teacher.setClassEntity(classEntity);
             teacher.setSchool(admin.getSchool());
+            teacher.setSubject(subject);
             teacher.setPassword(passwordEncoder.encode(teacher.getPassword()));
 
             Teacher savedTeacher = teacherService.saveTeacher(teacher);

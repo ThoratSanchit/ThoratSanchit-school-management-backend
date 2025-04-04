@@ -43,9 +43,9 @@ public class Teacher {
     @Column(nullable = false)
     private String contactNumber;
 
-//    @ManyToOne
-//    @JoinColumn(name = "subject_id", nullable = false)
-//    private Subject subject;
+    @ManyToOne
+    @JoinColumn(name = "subject_id", nullable = false)
+    private Subject subject;
 
     @Column(nullable = false)
     private LocalDateTime joiningDate;
@@ -54,6 +54,8 @@ public class Teacher {
     @Column(nullable = false)
     private UserType typeOfUser = UserType.TEACHER;
 
+    @Column(nullable = false)
+    private String subject_name;
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 }
