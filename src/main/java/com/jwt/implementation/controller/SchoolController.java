@@ -60,7 +60,7 @@ public class SchoolController {
 
             return GenerateResponces.generateResponse(
                     "School created successfully with School ID: " + savedSchool.getSchoolId(),
-                    HttpStatus.OK,
+                    HttpStatus.CREATED,
                     savedSchool.getSchoolId()
             );
         } catch (Exception e) {
