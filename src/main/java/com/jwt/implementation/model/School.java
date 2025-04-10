@@ -36,7 +36,7 @@ public class School {
 
     // Only admins are directly linked to the school
 //    @JsonIgnore
-    @JsonManagedReference
+//    @JsonManagedReference
     @OneToMany(mappedBy = "school", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Admin> admins;
+    private List<User> admins;
 }

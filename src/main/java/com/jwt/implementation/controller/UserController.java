@@ -33,27 +33,29 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
     @PostMapping("/login")
-    public String loginUser(@RequestBody UserDto userDto) throws Exception {
+    public ResponseEntity<?> loginUser(@RequestBody User userEntity) {
         try {
-        } catch (Exception ex) {
-            throw new Exception("Invalid username/password");
+            User user = userRepository.findByEmail(userEntity.getEmail())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            System.out.println("Login attempt for: " + userEntity.getEmail());
+
+            if (!passwordEncoder.matches(userEntity.getPassword(), user.getPassword())) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid password");
+            }
+
+            String token = jwtGenVal.generateToken(
+                    user.getName(),
+                    user.getEmail(),
+                    String.valueOf(user.getId()),
+                    String.valueOf(user.getRole()));
+
+            return ResponseEntity.ok("User logged in successfully. Token: " + token);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Login failed: " + e.getMessage());
         }
-
-        User user = userRepository.findByEmail(userDto.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        if (user == null) {
-            return "user not found";
-        }
-        String token=jwtGenVal.generateToken(
-                user.getName(),
-                user.getEmail(),
-                String.valueOf(user.getId()),
-                String.valueOf(user.getRole()));
-
-        return "user loggend successfull "+token;
     }
-
 
     @PostMapping("/create-user")
     public ResponseEntity<?> createUser(@RequestBody User user) {
