@@ -66,6 +66,7 @@ public class StudentProfileController {
             user.setEmail(dto.getEmail());
             user.setPassword(passwordEncoder.encode(dto.getPassword()));
             user.setRole(User.Role.STUDENT);
+            user.setSchool(teacher.getSchool());
             user = userRepository.save(user);
 
             // Get the ClassRoom
