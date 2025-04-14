@@ -9,5 +9,5 @@ public class AttendanceDto {
     private Long studentId;
     private Long classRoomId;
     private String date;
-    private Status status;
+    private String status;
 }

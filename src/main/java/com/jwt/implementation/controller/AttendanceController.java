@@ -29,7 +29,7 @@ public class AttendanceController {
     @Autowired
     private StudentProfileRepository studentProfileRepository;
 
-    // ✅ Mark attendance (Only by teacher)
+    // ✅ 1. Mark Attendance (Only Teachers)
     @PostMapping("/mark")
     public ResponseEntity<?> markAttendance(@RequestHeader("Authorization") String token,
                                             @RequestBody AttendanceDto dto) {
@@ -42,7 +42,8 @@ public class AttendanceController {
                 return GenerateResponces.generateResponse(
                         "Only teachers can mark attendance",
                         HttpStatus.FORBIDDEN,
-                        null);
+                        null
+                );
             }
 
             StudentProfile student = studentProfileRepository.findById(dto.getStudentId())
@@ -52,7 +53,17 @@ public class AttendanceController {
             attendance.setStudent(student);
             attendance.setClassRoom(student.getClassRoom());
             attendance.setDate(LocalDate.parse(dto.getDate()));
-            attendance.setStatus(dto.getStatus());
+
+            try {
+                Attendance.Status status = Attendance.Status.valueOf(dto.getStatus().toUpperCase());
+                attendance.setStatus(status);
+            } catch (IllegalArgumentException e) {
+                return GenerateResponces.generateResponse(
+                        "Invalid status value",
+                        HttpStatus.BAD_REQUEST,
+                        null
+                );
+            }
 
             Attendance saved = attendanceService.markAttendance(attendance);
             return GenerateResponces.generateResponse(
@@ -65,40 +76,98 @@ public class AttendanceController {
             return GenerateResponces.generateResponse(
                     "Error marking attendance: " + e.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR,
-                    null);
+                    null
+            );
         }
     }
 
-    // ✅ Get attendance for student
+    // ✅ 2. Get Attendance for a Student
     @GetMapping("/student/{studentId}")
     public ResponseEntity<?> getAttendanceByStudent(@PathVariable Long studentId) {
         try {
             return GenerateResponces.generateResponse(
                     "Attendance fetched successfully",
                     HttpStatus.OK,
-                    attendanceService
-                            .getAttendanceByStudent(studentId));
+                    attendanceService.getAttendanceByStudent(studentId)
+            );
         } catch (Exception e) {
             return GenerateResponces.generateResponse(
                     "Error fetching student attendance",
                     HttpStatus.INTERNAL_SERVER_ERROR,
-                    null);
+                    null
+            );
         }
     }
 
-    // ✅ Get attendance by class and date
+    // ✅ 3. Get Attendance by Class and Date
     @GetMapping("/classroom/{classRoomId}/date/{date}")
-    public ResponseEntity<?> getAttendanceByClassAndDate(@PathVariable Long classRoomId, @PathVariable String date) {
+    public ResponseEntity<?> getAttendanceByClassAndDate(@PathVariable Long classRoomId,
+                                                         @PathVariable String date) {
         try {
             return GenerateResponces.generateResponse(
                     "Attendance fetched successfully",
                     HttpStatus.OK,
-                    attendanceService.getAttendanceByClassRoomAndDate(classRoomId, date));
+                    attendanceService.getAttendanceByClassRoomAndDate(classRoomId, date)
+            );
         } catch (Exception e) {
             return GenerateResponces.generateResponse(
                     "Error fetching attendance",
                     HttpStatus.INTERNAL_SERVER_ERROR,
-                    null);
+                    null
+            );
+        }
+    }
+
+    // ✅ 4. Update Attendance
+    @PutMapping("/update/{attendanceId}")
+    public ResponseEntity<?> updateAttendanceStatus(@RequestHeader("Authorization") String token,
+                                                    @PathVariable Long attendanceId,
+                                                    @RequestBody AttendanceDto dto) {
+        try {
+
+            String email = AuthService.getEmailFromToken(token);
+            User teacher = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("Teacher not found"));
+
+            if (!teacher.getRole().equals(User.Role.TEACHER)) {
+                return GenerateResponces.generateResponse(
+                        "Only teachers can mark attendance",
+                        HttpStatus.FORBIDDEN,
+                        null
+                );
+            }
+
+            Attendance updated = attendanceService.updateAttendance(attendanceId, dto.getStatus());
+            return GenerateResponces.generateResponse(
+                    "Attendance updated successfully",
+                    HttpStatus.OK,
+                    updated.getAttendanceId()
+            );
+        } catch (Exception e) {
+            return GenerateResponces.generateResponse(
+                    "Error updating attendance",
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    null
+            );
+        }
+    }
+
+    // ✅ 5. Delete Attendance
+    @DeleteMapping("/delete/{attendanceId}")
+    public ResponseEntity<?> deleteAttendance(@PathVariable Long attendanceId) {
+        try {
+            attendanceService.deleteAttendance(attendanceId);
+            return GenerateResponces.generateResponse(
+                    "Attendance deleted successfully",
+                    HttpStatus.OK,
+                    null
+            );
+        } catch (Exception e) {
+            return GenerateResponces.generateResponse(
+                    "Error deleting attendance",
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    null
+            );
         }
     }
 }

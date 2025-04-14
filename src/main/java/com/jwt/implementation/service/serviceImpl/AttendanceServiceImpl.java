@@ -1,11 +1,7 @@
-package com.jwt.implementation.service.impl;
+package com.jwt.implementation.service.serviceImpl;
 
 import com.jwt.implementation.model.Attendance;
-import com.jwt.implementation.model.ClassRoom;
-import com.jwt.implementation.model.StudentProfile;
 import com.jwt.implementation.repository.AttendanceRepository;
-import com.jwt.implementation.repository.ClassRoomRepository;
-import com.jwt.implementation.repository.StudentProfileRepository;
 import com.jwt.implementation.service.AttendanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,12 +15,6 @@ public class AttendanceServiceImpl implements AttendanceService {
     @Autowired
     private AttendanceRepository attendanceRepository;
 
-    @Autowired
-    private StudentProfileRepository studentProfileRepository;
-
-    @Autowired
-    private ClassRoomRepository classRoomRepository;
-
     @Override
     public Attendance markAttendance(Attendance attendance) {
         return attendanceRepository.save(attendance);
@@ -32,15 +22,29 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Override
     public List<Attendance> getAttendanceByStudent(Long studentId) {
-        StudentProfile student = studentProfileRepository.findById(studentId)
-                .orElseThrow(() -> new RuntimeException("Student not found"));
-        return attendanceRepository.findByStudent(student);
+        return attendanceRepository.findByStudentStudentProfileId(studentId);
     }
 
     @Override
     public List<Attendance> getAttendanceByClassRoomAndDate(Long classRoomId, String date) {
-        ClassRoom classRoom = classRoomRepository.findById(classRoomId)
-                .orElseThrow(() -> new RuntimeException("Classroom not found"));
-        return attendanceRepository.findByClassRoomAndDate(classRoom, LocalDate.parse(date));
+        LocalDate localDate = LocalDate.parse(date);
+        return attendanceRepository.findByClassRoomIdAndDate(classRoomId, localDate);
+    }
+
+    @Override
+    public Attendance updateAttendance(Long attendanceId, String newStatus) {
+        Attendance attendance = attendanceRepository.findById(attendanceId)
+                .orElseThrow(() -> new RuntimeException("Attendance not found"));
+
+        attendance.setStatus(Attendance.Status.valueOf(newStatus));
+        return attendanceRepository.save(attendance);
+    }
+
+    @Override
+    public void deleteAttendance(Long attendanceId) {
+        Attendance attendance = attendanceRepository.findById(attendanceId)
+                .orElseThrow(() -> new RuntimeException("Attendance not found"));
+
+        attendanceRepository.delete(attendance);
     }
 }
