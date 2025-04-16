@@ -192,4 +192,29 @@ public class AttendanceController {
         }
     }
 
+
+    // ✅ Get Month-wise Attendance for a Student
+    @GetMapping("/student/{studentId}/month")
+    public ResponseEntity<?> getMonthlyAttendance(
+            @PathVariable Long studentId,
+            @RequestParam("month") int month,
+            @RequestParam("year") int year) {
+
+        try {
+            Map<String, Object> data = attendanceService.getMonthlyAttendance(studentId, month, year);
+            return GenerateResponces.generateResponse(
+                    "Monthly attendance fetched successfully",
+                    HttpStatus.OK,
+                    data
+            );
+        } catch (Exception e) {
+            return GenerateResponces.generateResponse(
+                    "Error fetching monthly attendance",
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    null
+            );
+        }
+    }
+
+
 }

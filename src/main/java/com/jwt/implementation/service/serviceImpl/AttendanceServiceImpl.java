@@ -85,5 +85,44 @@ public class AttendanceServiceImpl implements AttendanceService {
         return result;
     }
 
+    @Override
+    public Map<String, Object> getMonthlyAttendance(Long studentId, int month, int year) {
+        List<Attendance> attendanceList = attendanceRepository.findByStudent_StudentProfileId(studentId);
+
+        // Filter records for the given month and year
+        List<Attendance> monthlyRecords = attendanceList.stream()
+                .filter(a -> a.getDate().getMonthValue() == month && a.getDate().getYear() == year)
+                .toList();
+
+        long total = monthlyRecords.size();
+        long present = monthlyRecords.stream()
+                .filter(a -> a.getStatus() == Attendance.Status.PRESENT)
+                .count();
+        long absent = total - present;
+
+        double percentage = total > 0 ? (present * 100.0) / total : 0.0;
+
+        List<String> presentDates = monthlyRecords.stream()
+                .filter(a -> a.getStatus() == Attendance.Status.PRESENT)
+                .map(a -> a.getDate().toString())
+                .collect(Collectors.toList());
+
+        List<String> absentDates = monthlyRecords.stream()
+                .filter(a -> a.getStatus() == Attendance.Status.ABSENT)
+                .map(a -> a.getDate().toString())
+                .collect(Collectors.toList());
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("month", month);
+        result.put("year", year);
+        result.put("totalDays", total);
+        result.put("presentDays", present);
+        result.put("absentDays", absent);
+        result.put("percentage", String.format("%.2f", percentage));
+        result.put("presentDates", presentDates);
+        result.put("absentDates", absentDates);
+
+        return result;
+    }
 
 }

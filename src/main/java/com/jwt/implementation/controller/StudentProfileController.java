@@ -4,6 +4,7 @@ import com.jwt.implementation.authService.AuthService;
 import com.jwt.implementation.dto.StudentDto;
 import com.jwt.implementation.model.*;
 import com.jwt.implementation.repository.ClassRoomRepository;
+import com.jwt.implementation.repository.StudentProfileRepository;
 import com.jwt.implementation.repository.UserRepository;
 import com.jwt.implementation.responces.GenerateResponces;
 import com.jwt.implementation.service.StudentProfileService;
@@ -26,6 +27,8 @@ public class StudentProfileController {
 
     @Autowired
     private StudentProfileService studentProfileService;
+    @Autowired
+    private StudentProfileRepository studentProfileRepository;
 
     @Autowired
     private ClassRoomRepository classRoomRepository;
@@ -90,6 +93,18 @@ public class StudentProfileController {
         } catch (Exception e) {
             e.printStackTrace();
             return GenerateResponces.generateResponse("❌ Error creating student: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, null);
+        }
+    }
+
+
+    // get student  by user id
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<?> getStudentProfileByUserId(@PathVariable Long userId) {
+        Optional<StudentProfile> studentProfile = studentProfileRepository.findByUserId(userId);
+        if (studentProfile.isPresent()) {
+            return ResponseEntity.ok(studentProfile.get().getStudentProfileId());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Student profile not found for user ID " + userId);
         }
     }
 }

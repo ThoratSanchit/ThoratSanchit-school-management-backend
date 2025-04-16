@@ -1,5 +1,6 @@
 package com.jwt.implementation.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -16,6 +17,7 @@ public class StudentProfile {
     private String rollNumber;
 
     @OneToOne
+    @JsonIgnore
     private User user; // if student login needed
 }
 

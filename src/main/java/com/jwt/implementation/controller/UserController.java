@@ -55,6 +55,7 @@ public class UserController {
             response.put("message", "User logged in successfully.");
             response.put("token", token);
             response.put("role",user.getRole());
+            response.put("userId",user.getId());
             return ResponseEntity.ok(response);
 
 
