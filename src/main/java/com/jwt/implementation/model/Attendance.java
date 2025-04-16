@@ -1,6 +1,8 @@
 package com.jwt.implementation.model;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import java.time.LocalDate;
 
@@ -15,9 +17,11 @@ public class Attendance {
     private Long attendanceId;
 
     @ManyToOne
+    @JsonIgnore
     private StudentProfile student;
 
     @ManyToOne
+    @JsonIgnore      // use  when u want  dont expose the  entity
     private ClassRoom classRoom;
 
     private LocalDate date;

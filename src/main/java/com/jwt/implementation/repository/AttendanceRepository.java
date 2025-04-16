@@ -15,4 +15,5 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
     List<Attendance> findByClassRoomAndDate(ClassRoom classRoom, LocalDate date);
     List<Attendance> findByStudentStudentProfileId(Long studentId);
     List<Attendance> findByClassRoomIdAndDate(Long classRoomId, LocalDate date);
+    List<Attendance> findByStudent_StudentProfileId(Long studentId);
 }

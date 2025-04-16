@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/attendance")
@@ -170,4 +171,25 @@ public class AttendanceController {
             );
         }
     }
+
+
+    // calculate percentage
+    @GetMapping("/percentage/{studentId}")
+    public ResponseEntity<?> getAttendancePercentage(@PathVariable Long studentId) {
+        try {
+            Map<String, Object> data = attendanceService.calculateAttendancePercentage(studentId);
+            return GenerateResponces.generateResponse(
+                    "Attendance percentage calculated successfully",
+                    HttpStatus.OK,
+                    data
+            );
+        } catch (Exception e) {
+            return GenerateResponces.generateResponse(
+                    "Error calculating percentage",
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    null
+            );
+        }
+    }
+
 }

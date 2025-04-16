@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class AttendanceServiceImpl implements AttendanceService {
@@ -47,4 +50,40 @@ public class AttendanceServiceImpl implements AttendanceService {
 
         attendanceRepository.delete(attendance);
     }
+
+    @Override
+    public Map<String, Object> calculateAttendancePercentage(Long studentId) {
+        List<Attendance> attendanceList = attendanceRepository.findByStudent_StudentProfileId(studentId);
+
+        long total = attendanceList.size();
+        long present = attendanceList.stream()
+                .filter(a -> a.getStatus() == Attendance.Status.PRESENT)
+                .count();
+        long absent = total - present;
+
+        double percentage = total > 0 ? (present * 100.0) / total : 0.0;
+
+        // Dates
+        List<String> presentDates = attendanceList.stream()
+                .filter(a -> a.getStatus() == Attendance.Status.PRESENT)
+                .map(a -> a.getDate().toString())
+                .collect(Collectors.toList());
+
+        List<String> absentDates = attendanceList.stream()
+                .filter(a -> a.getStatus() == Attendance.Status.ABSENT)
+                .map(a -> a.getDate().toString())
+                .collect(Collectors.toList());
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("totalDays", total);
+        result.put("presentDays", present);
+        result.put("absentDays", absent);
+        result.put("percentage", String.format("%.2f", percentage));
+        result.put("presentDates", presentDates);
+        result.put("absentDates", absentDates);
+
+        return result;
+    }
+
+
 }

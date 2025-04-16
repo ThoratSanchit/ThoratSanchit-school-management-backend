@@ -3,6 +3,7 @@ package com.jwt.implementation.service;
 import com.jwt.implementation.model.Attendance;
 
 import java.util.List;
+import java.util.Map;
 
 public interface AttendanceService {
     Attendance markAttendance(Attendance attendance);
@@ -14,4 +15,6 @@ public interface AttendanceService {
     Attendance updateAttendance(Long attendanceId, String newStatus);
 
     void deleteAttendance(Long attendanceId);
+
+    public Map<String, Object> calculateAttendancePercentage(Long studentId);
 }

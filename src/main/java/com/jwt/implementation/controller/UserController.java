@@ -35,7 +35,7 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody User userEntity) {
         try {
-            System.out.println("0----------------------------------------");
+
             User user = userRepository.findByEmail(userEntity.getEmail())
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -54,6 +54,7 @@ public class UserController {
             Map<String, Object> response = new HashMap<>();
             response.put("message", "User logged in successfully.");
             response.put("token", token);
+            response.put("role",user.getRole());
             return ResponseEntity.ok(response);
 
 

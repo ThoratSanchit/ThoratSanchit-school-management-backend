@@ -63,7 +63,7 @@ public class JwtGeneratorValidator {
                 .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(30)))
+                .setExpiration(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(20)))
                 .signWith(SignatureAlgorithm.HS256, SECRET)
                 .compact();
     }
