@@ -16,7 +16,7 @@ public interface AttendanceService {
 
     void deleteAttendance(Long attendanceId);
 
-    public Map<String, Object> calculateAttendancePercentage(Long studentId);
+    public Map<String, Object> calculateAttendanceData(Long studentId);
 
     Map<String, Object> getMonthlyAttendance(Long studentId, int month, int year);
 

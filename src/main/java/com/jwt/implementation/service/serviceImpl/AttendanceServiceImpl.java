@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,8 +53,13 @@ public class AttendanceServiceImpl implements AttendanceService {
     }
 
     @Override
-    public Map<String, Object> calculateAttendancePercentage(Long studentId) {
-        List<Attendance> attendanceList = attendanceRepository.findByStudent_StudentProfileId(studentId);
+    public Map<String, Object> calculateAttendanceData(Long studentId) {
+        YearMonth currentMonth = YearMonth.now(); // e.g. 2025-04
+        LocalDate startDate = currentMonth.atDay(1);
+        LocalDate endDate = currentMonth.atEndOfMonth();
+
+        List<Attendance> attendanceList = attendanceRepository
+                .findByStudent_StudentProfileIdAndDateBetween(studentId, startDate, endDate);
 
         long total = attendanceList.size();
         long present = attendanceList.stream()
@@ -63,7 +69,6 @@ public class AttendanceServiceImpl implements AttendanceService {
 
         double percentage = total > 0 ? (present * 100.0) / total : 0.0;
 
-        // Dates
         List<String> presentDates = attendanceList.stream()
                 .filter(a -> a.getStatus() == Attendance.Status.PRESENT)
                 .map(a -> a.getDate().toString())
@@ -75,6 +80,8 @@ public class AttendanceServiceImpl implements AttendanceService {
                 .collect(Collectors.toList());
 
         Map<String, Object> result = new HashMap<>();
+        result.put("month", currentMonth.getMonth().toString());
+        result.put("year", currentMonth.getYear());
         result.put("totalDays", total);
         result.put("presentDays", present);
         result.put("absentDays", absent);
@@ -84,6 +91,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 
         return result;
     }
+
 
     @Override
     public Map<String, Object> getMonthlyAttendance(Long studentId, int month, int year) {

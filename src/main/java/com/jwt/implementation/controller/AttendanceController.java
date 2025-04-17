@@ -175,9 +175,9 @@ public class AttendanceController {
 
     // calculate percentage
     @GetMapping("/percentage/{studentId}")
-    public ResponseEntity<?> getAttendancePercentage(@PathVariable Long studentId) {
+    public ResponseEntity<?> getAttendanceData(@PathVariable Long studentId) {
         try {
-            Map<String, Object> data = attendanceService.calculateAttendancePercentage(studentId);
+            Map<String, Object> data = attendanceService.calculateAttendanceData(studentId);
             return GenerateResponces.generateResponse(
                     "Attendance percentage calculated successfully",
                     HttpStatus.OK,
