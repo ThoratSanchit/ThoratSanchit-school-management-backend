@@ -16,8 +16,10 @@ public interface AttendanceService {
 
     void deleteAttendance(Long attendanceId);
 
-    public Map<String, Object> calculateAttendanceData(Long studentId);
+    public Map<String, Object> calculateAttendanceData(Long studentId, int month, int year);
+
 
     Map<String, Object> getMonthlyAttendance(Long studentId, int month, int year);
+
 
 }

@@ -53,10 +53,10 @@ public class AttendanceServiceImpl implements AttendanceService {
     }
 
     @Override
-    public Map<String, Object> calculateAttendanceData(Long studentId) {
-        YearMonth currentMonth = YearMonth.now(); // e.g. 2025-04
-        LocalDate startDate = currentMonth.atDay(1);
-        LocalDate endDate = currentMonth.atEndOfMonth();
+    public Map<String, Object> calculateAttendanceData(Long studentId, int month, int year) {
+        YearMonth selectedMonth = YearMonth.of(year, month); // Example: 2025, 4 -> April 2025
+        LocalDate startDate = selectedMonth.atDay(1);
+        LocalDate endDate = selectedMonth.atEndOfMonth();
 
         List<Attendance> attendanceList = attendanceRepository
                 .findByStudent_StudentProfileIdAndDateBetween(studentId, startDate, endDate);
@@ -80,8 +80,8 @@ public class AttendanceServiceImpl implements AttendanceService {
                 .collect(Collectors.toList());
 
         Map<String, Object> result = new HashMap<>();
-        result.put("month", currentMonth.getMonth().toString());
-        result.put("year", currentMonth.getYear());
+        result.put("month", selectedMonth.getMonth().toString());
+        result.put("year", selectedMonth.getYear());
         result.put("totalDays", total);
         result.put("presentDays", present);
         result.put("absentDays", absent);
@@ -91,6 +91,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 
         return result;
     }
+
 
 
     @Override
