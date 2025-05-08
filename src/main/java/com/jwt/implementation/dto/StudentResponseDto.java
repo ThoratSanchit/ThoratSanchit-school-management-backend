@@ -13,4 +13,6 @@ public class StudentResponseDto {
     private LocalDate dateOfBirth;
     private String rollNumber;
     private Long classRoomId;
+
+    private String classRoomName;
 }
