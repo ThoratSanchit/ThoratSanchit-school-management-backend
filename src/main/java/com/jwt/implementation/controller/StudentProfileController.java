@@ -104,7 +104,7 @@ public class StudentProfileController {
     public ResponseEntity<?> getStudentProfileByUserId(@PathVariable Long userId) {
         Optional<StudentProfile> studentProfile = studentProfileRepository.findByUserId(userId);
         if (studentProfile.isPresent()) {
-            return ResponseEntity.ok(studentProfile.get().getUser());
+            return ResponseEntity.ok(studentProfile.get().getStudentProfileId());
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Student profile not found for user ID " + userId);
         }
