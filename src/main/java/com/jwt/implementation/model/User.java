@@ -1,9 +1,11 @@
 package com.jwt.implementation.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -26,6 +28,11 @@ public class User {
 
     @Column(nullable = false)
     private String password;
+    @Column(name = "address")
+    private String address;
+    @JsonFormat(pattern = "MMMM d, yyyy")
+    private LocalDate dateOfBirth;
+
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

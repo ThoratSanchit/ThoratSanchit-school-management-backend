@@ -2,7 +2,6 @@ package com.jwt.implementation.controller;
 
 import com.jwt.implementation.authService.AuthService;
 import com.jwt.implementation.config.JwtGeneratorValidator;
-import com.jwt.implementation.dto.UserDto;
 import com.jwt.implementation.model.User;
 import com.jwt.implementation.repository.UserRepository;
 import com.jwt.implementation.service.UserService;

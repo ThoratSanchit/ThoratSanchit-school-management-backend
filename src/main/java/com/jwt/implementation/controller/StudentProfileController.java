@@ -70,6 +70,8 @@ public class StudentProfileController {
             user.setPassword(passwordEncoder.encode(dto.getPassword()));
             user.setRole(User.Role.STUDENT);
             user.setSchool(teacher.getSchool());
+            user.setAddress(dto.getAddress());
+            user.setDateOfBirth(dto.getDateOfBirth());
             user = userRepository.save(user);
 
             // Get the ClassRoom
@@ -85,7 +87,7 @@ public class StudentProfileController {
             StudentProfile student = studentProfileService.createStudent(profile);
 
             return GenerateResponces.generateResponse(
-                    "✅ Student '" + user.getName() + "' created successfully in class " + classRoom.getClassName() + "-" + classRoom.getSection(),
+                    "✅ Student '" + user.getName() + "created successfully in class " + classRoom.getClassName() + "-" + classRoom.getSection(),
                     HttpStatus.CREATED,
                     student.getStudentProfileId()
             );
@@ -102,7 +104,7 @@ public class StudentProfileController {
     public ResponseEntity<?> getStudentProfileByUserId(@PathVariable Long userId) {
         Optional<StudentProfile> studentProfile = studentProfileRepository.findByUserId(userId);
         if (studentProfile.isPresent()) {
-            return ResponseEntity.ok(studentProfile.get().getStudentProfileId());
+            return ResponseEntity.ok(studentProfile.get().getUser());
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Student profile not found for user ID " + userId);
         }
